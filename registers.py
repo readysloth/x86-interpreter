@@ -1,4 +1,10 @@
 import typing as t
+from collections import namedtuple
+
+FLAGS_TYPE = namedtuple('FLAGS', ['CF', 'PF', 'AF',
+                                  'ZF', 'SF', 'TF',
+                                  'IF', 'DF', 'OF'])
+
 
 class Registers:
     def __init__(self, AH, AL,
@@ -6,7 +12,8 @@ class Registers:
                        CH, CL,
                        DH, DL,
                        SI, DI,
-                       SP, BP):
+                       SP, BP,
+                       FLAGS: FLAGS_TYPE):
         self.AH = AH
         self.AL = AL
 
@@ -23,6 +30,25 @@ class Registers:
         self.DI = DI
         self.SP = SP
         self.BP = BP
+        self.FLAGS = FLAGS
+
+    def __str__(self):
+        output = """
+                 AH | AL  |        BH | BL  |        CH | CL  |         DH | DL  |
+        +-----------+-----+-----------+-----+-----------+-----+------------+-----+
+        |AX   0x{:04x}'{:04x} | BX  0x{:04x}'{:04x} | CX  0x{:04x}'{:04x} | DX   0x{:04x}'{:04x} |
+        +-------------------------------------------------------------------------
+
+        +----------------------------------+ +-----------------------------------+
+        |SI   0x{:08x}  | DI  0x{:08x} | |SP  0x{:08x}  | BP   0x{:08x}  |
+        +----------------------------------+ +-----------------------------------+
+        +========================================================================+
+        |    FLAGS: {}
+        +========================================================================+
+        """.format(self.AH, self.AL, self.BH, self.BL, self.CH, self.CL, self.DH, self.DL,
+                   self.SI, self.DI, self.SP, self.BP,
+                   str(self.FLAGS).replace('FLAGS(', '').replace(')', ''))
+        return output
 
     @classmethod
     def _generic_part_names(cls, register_name: str) -> t.Tuple[str, str]:
