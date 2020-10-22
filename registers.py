@@ -1,9 +1,25 @@
 import typing as t
-from collections import namedtuple
+from collections import OrderedDict
 
-FLAGS_TYPE = namedtuple('FLAGS', ['CF', 'PF', 'AF',
-                                  'ZF', 'SF', 'TF',
-                                  'IF', 'DF', 'OF'])
+
+class Flags:
+    def __init__(self,
+                 CF, PF, AF,
+                 ZF, SF, TF,
+                 IF, DF, OF):
+        self.CF = CF
+        self.PF = PF
+        self.AF = AF
+        self.ZF = ZF
+        self.SF = SF
+        self.TF = TF
+        self.IF = IF
+        self.DF = DF
+        self.OF = OF
+
+    def __str__(self) -> str:
+        flags = OrderedDict(self.__dict__.items())
+        return ' '.join(filter(lambda k: flags[k], flags))
 
 
 class Registers:
@@ -13,7 +29,7 @@ class Registers:
                        DH, DL,
                        SI, DI,
                        SP, BP,
-                       FLAGS: FLAGS_TYPE):
+                       FLAGS: Flags):
         self.AH = AH
         self.AL = AL
 
@@ -32,7 +48,7 @@ class Registers:
         self.BP = BP
         self.FLAGS = FLAGS
 
-    def __str__(self):
+    def __str__(self) -> str:
         output = """
                  AH | AL  |        BH | BL  |        CH | CL  |         DH | DL  |
         +-----------+-----+-----------+-----+-----------+-----+------------+-----+
@@ -43,7 +59,7 @@ class Registers:
         |SI   0x{:08x}  | DI  0x{:08x} | |SP  0x{:08x}  | BP   0x{:08x}  |
         +----------------------------------+ +-----------------------------------+
         +========================================================================+
-        |    FLAGS: {}
+        |    FLAGS: {: <26}                                   |
         +========================================================================+
         """.format(self.AH, self.AL, self.BH, self.BL, self.CH, self.CL, self.DH, self.DL,
                    self.SI, self.DI, self.SP, self.BP,
