@@ -88,6 +88,10 @@ class Registers:
                         value: t.Union[str, int]):
         register_name_h_part, register_name_l_part = Registers._generic_part_names(register_name)
 
+        if type(value) == int and value < 0b11111111:
+            setattr(self, register_name_h_part, 0)
+            setattr(self, register_name_l_part, value)
+            return
         value = str(value)
 
         setattr(self, register_name_h_part, int(value[:len(value)//2]))

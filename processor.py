@@ -164,7 +164,7 @@ class CPU:
         self.registers.FLAGS.SF = 1 if result_bits[0] == '1' else 0
         self.registers.FLAGS.ZF = 1 if first_arg - second_arg == 0 else 0
         self.registers.FLAGS.AF = 0 #TODO: AF = 1 if Carry in the low nibble of result
-        self.registers.FLAGS.PF = 1 if result_bits[-8:].count('1') == result_bits[-8:].count('0') else 0        return self
+        self.registers.FLAGS.PF = 1 if result_bits[-8:].count('1') == result_bits[-8:].count('0') else 0
         return self
 
 
@@ -176,7 +176,7 @@ class CPU:
         raise NotImplementedError('CMPSW is not implemented due to segment registers are not implemented yet')
 
 
-    def CWD(self, arguments: OpArgs):
+    def CWD(self):
         if get_bits(self.registers.AX)[0] == '1':
             self.registers.DX = 0xFFFF
         else:
