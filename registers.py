@@ -92,10 +92,9 @@ class Registers:
             setattr(self, register_name_h_part, 0)
             setattr(self, register_name_l_part, value)
             return
-        value = str(value)
 
-        setattr(self, register_name_h_part, int(value[:len(value)//2]))
-        setattr(self, register_name_l_part, int(value[len(value)//2:]))
+        setattr(self, register_name_l_part, value & 0xFFFF)
+        setattr(self, register_name_h_part, value >> 16 & 0xFFFF)
 
 
     @property
