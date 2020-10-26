@@ -30,6 +30,9 @@ class OpArgs:
     def op_type(self):
         return (self.to_type, self.arg_type)
 
+    def __str__(self):
+        return 'to: {}, arg: {}'.format(self.to, self.arg)
+
 
 class CPU:
     def __init__(self,
@@ -51,7 +54,7 @@ class CPU:
         elif arguments.arg_type == OpType.IMM:
             second_arg = arguments.arg
 
-        return first_arg, second_arg
+        return int(first_arg if first_arg else 0), int(second_arg if second_arg else 0)
 
 
     def AAA(self):
