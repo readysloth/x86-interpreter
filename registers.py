@@ -50,17 +50,17 @@ class Registers:
 
     def __str__(self) -> str:
         output = """
-                 AH | AL  |        BH | BL  |        CH | CL  |         DH | DL  |
-        +-----------+-----+-----------+-----+-----------+-----+------------+-----+
-        |AX   0x{:04x}'{:04x} | BX  0x{:04x}'{:04x} | CX  0x{:04x}'{:04x} | DX   0x{:04x}'{:04x} |
-        +-------------------------------------------------------------------------
+               AH | AL|      BH | BL|      CH | CL|       DH | DL|
+        +---------+---+---------+---+---------+---+----------+---+
+        |AX   0x{:02x}'{:02x} | BX  0x{:02x}'{:02x} | CX  0x{:02x}'{:02x} | DX   0x{:02x}'{:02x} |
+        +--------------------------------------------------------+
 
-        +----------------------------------+ +-----------------------------------+
-        |SI   0x{:08x}  | DI  0x{:08x} | |SP  0x{:08x}  | BP   0x{:08x}  |
-        +----------------------------------+ +-----------------------------------+
-        +========================================================================+
-        |    FLAGS: {: <26}                                   |
-        +========================================================================+
+        +--------------------------+ +---------------------------+
+        |SI   0x{:04x}  | DI  0x{:04x} | |SP  0x{:04x}  | BP   0x{:04x}  |
+        +--------------------------+ +---------------------------+
+        +========================================================+
+        |    FLAGS: {: <26}                   |
+        +========================================================+
         """.format(self.AH, self.AL, self.BH, self.BL, self.CH, self.CL, self.DH, self.DL,
                    self.SI, self.DI, self.SP, self.BP,
                    str(self.FLAGS).replace('FLAGS(', '').replace(')', ''))
@@ -76,11 +76,11 @@ class Registers:
     def _generic_getter(self, register_name: str) -> int:
         register_name_h_part, register_name_l_part = Registers._generic_part_names(register_name)
 
-        register_h_part = getattr(self, register_name_h_part)
-        register_l_part = getattr(self, register_name_l_part)
+        register_h_part = getattr(self, register_name_h_part) & 0xFF
+        register_l_part = getattr(self, register_name_l_part) & 0xFF
 
-        register = str(register_h_part) + str(register_l_part)
-        return int(register)
+        register = register_h_part << 16  + register_l_part
+        return register
 
 
     def _generic_setter(self,
@@ -88,13 +88,8 @@ class Registers:
                         value: t.Union[str, int]):
         register_name_h_part, register_name_l_part = Registers._generic_part_names(register_name)
 
-        if type(value) == int and value < 0b11111111:
-            setattr(self, register_name_h_part, 0)
-            setattr(self, register_name_l_part, value)
-            return
-
-        setattr(self, register_name_l_part, value & 0xFFFF)
-        setattr(self, register_name_h_part, value >> 16 & 0xFFFF)
+        setattr(self, register_name_l_part, value & 0xFF)
+        setattr(self, register_name_h_part, value >> 8 & 0xFF)
 
 
     @property
